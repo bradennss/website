@@ -195,62 +195,62 @@ export const clientProjects: ClientProject[] = [
       },
     ],
   },
-  {
-    id: "comunal",
-    name: "Comunal",
-    url: "https://comunal.nyc",
-    media: [
-      {
-        type: "image",
-        src: assets.clientProjects.comunal.homeImage,
-        width: 638,
-        height: 398,
-      },
-      {
-        type: "image",
-        src: assets.clientProjects.comunal.menuImage,
-        width: 638,
-        height: 398,
-      },
-      {
-        type: "image",
-        src: assets.clientProjects.comunal.reservationsImage,
-        width: 638,
-        height: 398,
-      },
-      {
-        type: "image",
-        src: assets.clientProjects.comunal.careersImage,
-        width: 638,
-        height: 398,
-      },
-      {
-        type: "image",
-        src: assets.clientProjects.comunal.privacyImage,
-        width: 638,
-        height: 398,
-      },
-      {
-        type: "image",
-        src: assets.clientProjects.comunal.termsImage,
-        width: 638,
-        height: 398,
-      },
-    ],
-  },
-  {
-    id: "comunal-members",
-    name: "Comunal Members",
-    url: "https://members.comunal.nyc",
-    media: [
-      {
-        type: "video",
-        src: assets.clientProjects.comunalMembers.homeVideo,
-        width: 638,
-        height: 398,
-      },
-    ],
-  },
+  // {
+  //   id: "comunal",
+  //   name: "Comunal",
+  //   url: "https://comunal.nyc",
+  //   media: [
+  //     {
+  //       type: "image",
+  //       src: assets.clientProjects.comunal.homeImage,
+  //       width: 638,
+  //       height: 398,
+  //     },
+  //     {
+  //       type: "image",
+  //       src: assets.clientProjects.comunal.menuImage,
+  //       width: 638,
+  //       height: 398,
+  //     },
+  //     {
+  //       type: "image",
+  //       src: assets.clientProjects.comunal.reservationsImage,
+  //       width: 638,
+  //       height: 398,
+  //     },
+  //     {
+  //       type: "image",
+  //       src: assets.clientProjects.comunal.careersImage,
+  //       width: 638,
+  //       height: 398,
+  //     },
+  //     {
+  //       type: "image",
+  //       src: assets.clientProjects.comunal.privacyImage,
+  //       width: 638,
+  //       height: 398,
+  //     },
+  //     {
+  //       type: "image",
+  //       src: assets.clientProjects.comunal.termsImage,
+  //       width: 638,
+  //       height: 398,
+  //     },
+  //   ],
+  // },
+  // {
+  //   id: "comunal-members",
+  //   name: "Comunal Members",
+  //   url: "https://members.comunal.nyc",
+  //   media: [
+  //     {
+  //       type: "video",
+  //       src: assets.clientProjects.comunalMembers.homeVideo,
+  //       width: 638,
+  //       height: 398,
+  //     },
+  //   ],
+  // },
 ];
 
 export const personalProjects: PersonalProject[] = [
