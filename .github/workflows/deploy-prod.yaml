@@ -1,6 +1,9 @@
 name: Deploy Prod
 
 on:
+  workflow_run:
+    workflows: ["Build and Push"]
+    types: [completed]
   workflow_dispatch:
 
 concurrency:
@@ -29,9 +32,9 @@ jobs:
         run: |
           echo "NOMAD_ADDR=${{ vars.NOMAD_ADDR }}" >> $GITHUB_ENV
           echo "NOMAD_TOKEN=${{ secrets.NOMAD_TOKEN }}" >> $GITHUB_ENV
-          echo "AWS_ACCESS_KEY_ID=${{ secrets.PROD_TF_STATE_R2_ACCESS_KEY }}" >> $GITHUB_ENV
-          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.PROD_TF_STATE_R2_SECRET_KEY }}" >> $GITHUB_ENV
-          echo "AWS_ENDPOINT_URL_S3=${{ vars.PROD_TF_STATE_R2_ENDPOINT_URL }}" >> $GITHUB_ENV
+          echo "AWS_ACCESS_KEY_ID=${{ secrets.TF_STATE_R2_ACCESS_KEY }}" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.TF_STATE_R2_SECRET_KEY }}" >> $GITHUB_ENV
+          echo "AWS_ENDPOINT_URL_S3=${{ vars.TF_STATE_R2_ENDPOINT_URL }}" >> $GITHUB_ENV
           echo "TF_VAR_web_image_tag=${{ env.DOCKER_REPO }}/web:v${{ steps.web-version.outputs.current-version }}" >> $GITHUB_ENV
       - name: Terraform init
         working-directory: ${{ env.TF_DIR }}
