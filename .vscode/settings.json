@@ -1,9 +1,14 @@
 {
+  "editor.tabSize": 2,
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
+    "source.fixAll.eslint": "always",
+    "source.organizeImports": "always"
   },
   "eslint.validate": ["javascript", "typescript"],
-  "editor.tabSize": 2,
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "tailwindCSS.classFunctions": ["cva", "cx", "cn"],
+  "[rust]": {
+    "editor.tabSize": 4
+  }
 }
