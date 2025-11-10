@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  TF_DIR: terraform/prod
+  TF_DIR: terraform
   DOCKER_REPO: "${{ vars.DOCKER_REGISTRY }}/braden-lol"
 
 jobs:
