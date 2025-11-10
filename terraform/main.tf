@@ -31,7 +31,7 @@ resource "nomad_namespace" "namespace" {
 }
 
 module "web" {
-  source = "../shared/apps/web"
+  source = "./shared/apps/web"
 
   image_tag = var.web_image_tag
 
