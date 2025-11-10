@@ -1,7 +1,5 @@
-export type MediaType = "image" | "video";
-
 export type Media = {
-  type: MediaType;
+  type: "image" | "video";
   src: string;
   alt?: string;
   width: number;

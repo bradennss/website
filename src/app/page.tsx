@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { memo } from "react";
-import { MediaDisplay } from "~/components/media-display";
+import {
+  MultimediaContainer,
+  MultimediaDisplay,
+  MultimediaSpinner,
+} from "~/components/multimedia-display";
 import {
   ClientProject,
   clientProjects,
@@ -14,12 +18,17 @@ export const ClientProjectCard = memo<{ project: ClientProject }>(
 
     return (
       <Link prefetch href={`/work/${project.id}`}>
-        <MediaDisplay
-          type={firstMedia.type}
-          src={firstMedia.src}
-          alt={firstMedia.alt ?? project.name}
+        <MultimediaContainer
           style={{ aspectRatio: `${firstMedia.width}/${firstMedia.height}` }}
-        />
+        >
+          <MultimediaSpinner />
+          <MultimediaDisplay
+            key={firstMedia.src}
+            type={firstMedia.type}
+            src={firstMedia.src}
+            imageProps={{ alt: firstMedia.alt ?? project.name }}
+          />
+        </MultimediaContainer>
       </Link>
     );
   }
@@ -32,12 +41,17 @@ export const PersonalProjectCard = memo<{ project: PersonalProject }>(
 
     return (
       <Link prefetch href={`/projects/${project.id}`}>
-        <MediaDisplay
-          type={firstMedia.type}
-          src={firstMedia.src}
-          alt={firstMedia.alt ?? project.name}
+        <MultimediaContainer
           style={{ aspectRatio: `${firstMedia.width}/${firstMedia.height}` }}
-        />
+        >
+          <MultimediaSpinner />
+          <MultimediaDisplay
+            key={firstMedia.src}
+            type={firstMedia.type}
+            src={firstMedia.src}
+            imageProps={{ alt: firstMedia.alt ?? project.name }}
+          />
+        </MultimediaContainer>
       </Link>
     );
   }

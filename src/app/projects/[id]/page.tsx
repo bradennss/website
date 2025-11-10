@@ -2,7 +2,11 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { memo } from "react";
-import { MediaDisplay } from "~/components/media-display";
+import {
+  MultimediaContainer,
+  MultimediaDisplay,
+  MultimediaSpinner,
+} from "~/components/multimedia-display";
 import { personalProjects } from "~/data";
 
 function formatUrl(url: string) {
@@ -62,13 +66,18 @@ const PersonalProjectPage = memo<PageProps<"/projects/[id]">>(
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {project.media.map((media, index) => (
-            <MediaDisplay
+            <MultimediaContainer
               key={index}
-              type={media.type}
-              src={media.src}
-              alt={media.alt ?? project.name}
               style={{ aspectRatio: `${media.width}/${media.height}` }}
-            />
+            >
+              <MultimediaSpinner />
+              <MultimediaDisplay
+                key={index}
+                type={media.type}
+                src={media.src}
+                imageProps={{ alt: media.alt ?? project.name }}
+              />
+            </MultimediaContainer>
           ))}
         </div>
       </main>
