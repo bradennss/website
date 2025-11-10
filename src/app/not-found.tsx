@@ -2,10 +2,10 @@ import { Metadata } from "next";
 import { memo } from "react";
 
 export const metadata: Metadata = {
-  title: "Braden",
+  title: "Not Found",
 };
 
-const NotFoundPage = memo(async () => {
+const NotFoundPage = memo(() => {
   return (
     <main>
       <div className="w-full max-w-2xl mr-auto px-4 pt-8 pb-8 flex flex-col gap-8">

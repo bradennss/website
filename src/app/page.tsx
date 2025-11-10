@@ -44,7 +44,7 @@ export const PersonalProjectCard = memo<{ project: PersonalProject }>(
 );
 PersonalProjectCard.displayName = "PersonalProjectCard";
 
-const HomePage = memo(async () => {
+const HomePage = memo(() => {
   return (
     <main className="w-full px-4 pt-8 pb-8 flex flex-col gap-8">
       <h1 className="text-2xl font-semibold lowercase">Work</h1>

@@ -1,11 +1,11 @@
-import { forwardRef, HTMLProps } from "react";
+import { ComponentProps, memo } from "react";
 import { cn } from "~/utils";
 import styles from "./prose.module.css";
 
-export const Prose = forwardRef<HTMLDivElement, HTMLProps<HTMLDivElement>>(
-  ({ children, className, ...props }, ref) => {
+export const Prose = memo<ComponentProps<"div">>(
+  ({ children, className, ...props }) => {
     return (
-      <div ref={ref} className={cn(styles.prose, className)} {...props}>
+      <div className={cn(styles.prose, className)} {...props}>
         {children}
       </div>
     );

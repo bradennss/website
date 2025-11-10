@@ -11,9 +11,7 @@ function formatUrl(url: string) {
 
 export async function generateMetadata({
   params,
-}: {
-  params: Promise<{ id: string }>;
-}): Promise<Metadata> {
+}: PageProps<"/projects/[id]">): Promise<Metadata> {
   const { id } = await params;
   const project = personalProjects.find((project) => project.id === id);
   if (!project) {
@@ -34,7 +32,7 @@ export async function generateMetadata({
   };
 }
 
-const PersonalProjectPage = memo<{ params: Promise<{ id: string }> }>(
+const PersonalProjectPage = memo<PageProps<"/projects/[id]">>(
   async ({ params }) => {
     const { id } = await params;
     const project = personalProjects.find((project) => project.id === id);

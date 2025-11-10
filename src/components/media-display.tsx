@@ -1,24 +1,22 @@
 "use client";
 
 import Image from "next/image";
-import { forwardRef, HTMLProps, useCallback, useState } from "react";
+import { ComponentProps, memo, useCallback, useState } from "react";
 import { cn } from "~/utils";
 import { Spinner } from "./spinner";
 
-export const MediaDisplay = forwardRef<
-  HTMLDivElement,
-  Omit<HTMLProps<HTMLDivElement>, "children"> & {
+export const MediaDisplay = memo<
+  ComponentProps<"div"> & {
     type: "image" | "video";
     src: string;
     alt: string;
   }
->(({ className, type, src, alt, ...props }, ref) => {
+>(({ className, type, src, alt, ...props }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const handleLoaded = useCallback(() => setIsLoaded(true), []);
 
   return (
     <div
-      ref={ref}
       className={cn(
         "relative flex items-center justify-center aspect-video overflow-hidden border border-foreground bg-linear-to-b from-foreground/5 to-foreground/25",
         className

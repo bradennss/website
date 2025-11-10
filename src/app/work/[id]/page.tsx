@@ -11,9 +11,7 @@ function formatUrl(url: string) {
 
 export async function generateMetadata({
   params,
-}: {
-  params: Promise<{ id: string }>;
-}): Promise<Metadata> {
+}: PageProps<"/work/[id]">): Promise<Metadata> {
   const { id } = await params;
   const project = clientProjects.find((project) => project.id === id);
   if (!project) {
@@ -34,49 +32,47 @@ export async function generateMetadata({
   };
 }
 
-const ClientProjectPage = memo<{ params: Promise<{ id: string }> }>(
-  async ({ params }) => {
-    const { id } = await params;
-    const project = clientProjects.find((project) => project.id === id);
-    if (!project) {
-      notFound();
-    }
-
-    return (
-      <main className="w-full px-4 pt-8 pb-8 flex flex-col gap-8">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-semibold lowercase">
-            <Link prefetch href="/">
-              <span className="font-semibold">Work</span>
-            </Link>
-            <span className="text-foreground/25 font-normal"> / </span>
-            <span>{project.name}</span>
-          </h1>
-          {project.url && (
-            <Link
-              href={project.url}
-              target={`client-project-${project.id}`}
-              className="underline"
-            >
-              {formatUrl(project.url)}
-            </Link>
-          )}
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {project.media.map((media, index) => (
-            <MediaDisplay
-              key={index}
-              type={media.type}
-              src={media.src}
-              alt={media.alt ?? project.name}
-              style={{ aspectRatio: `${media.width}/${media.height}` }}
-            />
-          ))}
-        </div>
-      </main>
-    );
+const ClientProjectPage = memo<PageProps<"/work/[id]">>(async ({ params }) => {
+  const { id } = await params;
+  const project = clientProjects.find((project) => project.id === id);
+  if (!project) {
+    notFound();
   }
-);
+
+  return (
+    <main className="w-full px-4 pt-8 pb-8 flex flex-col gap-8">
+      <div className="flex flex-col gap-2">
+        <h1 className="text-2xl font-semibold lowercase">
+          <Link prefetch href="/">
+            <span className="font-semibold">Work</span>
+          </Link>
+          <span className="text-foreground/25 font-normal"> / </span>
+          <span>{project.name}</span>
+        </h1>
+        {project.url && (
+          <Link
+            href={project.url}
+            target={`client-project-${project.id}`}
+            className="underline"
+          >
+            {formatUrl(project.url)}
+          </Link>
+        )}
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {project.media.map((media, index) => (
+          <MediaDisplay
+            key={index}
+            type={media.type}
+            src={media.src}
+            alt={media.alt ?? project.name}
+            style={{ aspectRatio: `${media.width}/${media.height}` }}
+          />
+        ))}
+      </div>
+    </main>
+  );
+});
 ClientProjectPage.displayName = "ClientProjectPage";
 
 export default ClientProjectPage;
