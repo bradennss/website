@@ -1,0 +1,15 @@
+node_modules
+.turbo/
+
+coverage
+test-results.json
+
+.next/
+dist/
+target/
+coverage/
+next-env.d.ts
+
+pnpm-lock.yaml
+
+**/generated/**/*.ts

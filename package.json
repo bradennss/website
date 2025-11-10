@@ -1,41 +1,22 @@
 {
-  "name": "braden.lol",
-  "version": "0.2.8",
+  "name": "braden-lol",
   "private": true,
-  "packageManager": "pnpm@10.17.1",
-  "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
-    "start": "next start",
-    "lint": "eslint"
+  "engines": {
+    "node": ">=22.11.0"
   },
-  "dependencies": {
-    "@tanstack/react-query": "^5.90.7",
-    "clsx": "^2.1.1",
-    "lucide-react": "^0.544.0",
-    "next": "16.0.1",
-    "react": "19.2.0",
-    "react-dom": "19.2.0",
-    "tailwind-merge": "^3.4.0"
+  "packageManager": "pnpm@9.14.2",
+  "scripts": {
+    "lint": "turbo run lint --continue",
+    "format": "turbo run format --continue",
+    "typecheck": "turbo run typecheck",
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "dev:packages": "turbo run dev --filter=./packages/*",
+    "test": "turbo run test"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.1",
-    "@tailwindcss/postcss": "^4.1.17",
-    "@types/node": "^20.19.24",
-    "@types/react": "19.2.2",
-    "@types/react-dom": "19.2.2",
-    "eslint": "^9.39.1",
-    "eslint-config-next": "16.0.1",
-    "tailwindcss": "^4.1.17",
-    "typescript": "^5.9.3"
+    "prettier": "3.5.3",
+    "turbo": "2.6.0"
   },
-  "pnpm": {
-    "overrides": {
-      "@types/react": "19.2.2",
-      "@types/react-dom": "19.2.2"
-    },
-    "onlyBuiltDependencies": [
-      "sharp"
-    ]
-  }
+  "prettier": {}
 }

@@ -1,3 +1,3 @@
-variable "website_image_tag" {
+variable "web_image_tag" {
   type = string
 }

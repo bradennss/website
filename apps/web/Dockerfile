@@ -21,7 +21,7 @@ COPY . .
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store,sharing=locked \
   pnpm install --frozen-lockfile
 
-WORKDIR /app
+WORKDIR /app/apps/web
 
 RUN pnpm build
 
@@ -37,11 +37,9 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone .
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-ENV HOSTNAME=0.0.0.0
-ENV PORT=80
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
+# COPY --from=installer --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
 
 ENTRYPOINT [ "/usr/bin/dumb-init", "--" ]
-CMD ["node", "server.js"]
+CMD ["node", "apps/web/server.js"]

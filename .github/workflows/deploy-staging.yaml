@@ -1,0 +1,45 @@
+name: Deploy Staging
+
+on:
+  workflow_run:
+    workflows: ["Build and Push"]
+    types: [completed]
+  workflow_dispatch:
+
+concurrency:
+  group: build-and-push
+  cancel-in-progress: false
+
+env:
+  TF_DIR: terraform/staging
+  DOCKER_REPO: "${{ vars.DOCKER_REGISTRY }}/braden-lol"
+
+jobs:
+  deploy-staging:
+    name: Deploy Staging
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+      - name: Get Web version
+        id: web-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
+        with:
+          path: apps/web
+      - name: Export environment
+        run: |
+          echo "NOMAD_ADDR=${{ vars.NOMAD_ADDR }}" >> $GITHUB_ENV
+          echo "NOMAD_TOKEN=${{ secrets.NOMAD_TOKEN }}" >> $GITHUB_ENV
+          echo "AWS_ACCESS_KEY_ID=${{ secrets.STAGING_TF_STATE_R2_ACCESS_KEY }}" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.STAGING_TF_STATE_R2_SECRET_KEY }}" >> $GITHUB_ENV
+          echo "AWS_ENDPOINT_URL_S3=${{ vars.STAGING_TF_STATE_R2_ENDPOINT_URL }}" >> $GITHUB_ENV
+          echo "TF_VAR_web_image_tag=${{ env.DOCKER_REPO }}/web:v${{ steps.web-version.outputs.current-version }}" >> $GITHUB_ENV
+      - name: Terraform init
+        working-directory: ${{ env.TF_DIR }}
+        run: terraform init
+      - name: Terraform apply
+        working-directory: ${{ env.TF_DIR }}
+        run: terraform apply -auto-approve -input=false

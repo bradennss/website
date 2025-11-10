@@ -1,0 +1,7 @@
+{
+  "name": "package-version-sync",
+  "scripts": {
+    "build": "cargo build",
+    "test": "cargo test"
+  }
+}

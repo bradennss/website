@@ -22,7 +22,7 @@ terraform {
 }
 
 locals {
-  app_domain         = "braden.lol"
+  app_domain = "braden.lol"
 }
 
 resource "nomad_namespace" "namespace" {
@@ -30,14 +30,13 @@ resource "nomad_namespace" "namespace" {
   description = "braden.lol"
 }
 
-module "web" {
-  source = "../shared/apps/web"
-
-  image_tag = var.web_image_tag
-
-  namespace = nomad_namespace.namespace.name
-  replicas  = 2
-  cpu       = 100
-  memory    = 100
-  app_domain = local.app_domain
+resource "nomad_job" "website" {
+  jobspec = templatefile("${path.module}/job.hcl", {
+    namespace  = nomad_namespace.namespace.name
+    app_domain = local.app_domain
+    replicas   = 2
+    cpu        = 100
+    memory     = 100
+    image_tag  = var.website_image_tag
+  })
 }
