@@ -87,6 +87,13 @@ function main() {
       })),
       removeClientIds: null,
     });
+    publishServerUpdate(app, ROOM_NAME_TOPIC(roomName), {
+      myId: null,
+      roomName: null,
+      clientCount: clients.size,
+      clientUpdates: null,
+      removeClientIds: null,
+    });
 
     client.logger.info(`Added to room ${roomName}`);
   }

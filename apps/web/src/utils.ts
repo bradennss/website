@@ -17,3 +17,7 @@ export function pluralize(
 ) {
   return `${count} ${count === 1 ? singularWord : pluralWord}`;
 }
+
+export function lerp(a: number, b: number, t: number) {
+  return a + (b - a) * t;
+}

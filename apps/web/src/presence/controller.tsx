@@ -197,15 +197,13 @@ export const PresenceController = memo<{ serverUrl: string }>(
       handleScroll();
 
       const handleMouseMove = (event: MouseEvent) => {
+        scrollRef.current = { x: window.scrollX, y: window.scrollY };
         pointerRef.current = { x: event.clientX, y: event.clientY };
 
         if (!isConnected) {
           return;
         }
 
-        if (!scrollRef.current) {
-          return;
-        }
         const pointerPercent = getPointerPercent(
           pointerRef.current,
           scrollRef.current,
