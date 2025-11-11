@@ -23,7 +23,7 @@ job "presence" {
 
     service {
       name = "${namespace}-presence"
-      port = "web"
+      port = "presence"
 
       tags = [
         "traefik.enable=true",
