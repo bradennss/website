@@ -41,3 +41,15 @@ module "web" {
   memory    = 100
   app_domain = local.app_domain
 }
+
+module "presence" {
+  source = "./shared/apps/presence"
+
+  image_tag = var.presence_image_tag
+
+  namespace = nomad_namespace.namespace.name
+  replicas  = 1
+  cpu       = 100
+  memory    = 100
+  app_domain = local.app_domain
+}
