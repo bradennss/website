@@ -8,6 +8,7 @@ import {
   MultimediaSpinner,
 } from "~/components/multimedia-display";
 import { personalProjects } from "~/data";
+import { PresenceStatus } from "~/presence/status";
 
 function formatUrl(url: string) {
   return url.replace(/^https?:\/\//, "");
@@ -47,13 +48,16 @@ const PersonalProjectPage = memo<PageProps<"/projects/[id]">>(
     return (
       <main className="w-full px-4 pt-8 pb-8 flex flex-col gap-8">
         <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-semibold lowercase">
-            <Link prefetch href="/">
-              <span className="font-semibold">Projects</span>
-            </Link>
-            <span className="text-foreground/25 font-normal"> / </span>
-            <span>{project.name}</span>
-          </h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-semibold lowercase">
+              <Link prefetch href="/">
+                <span className="font-semibold">Projects</span>
+              </Link>
+              <span className="text-foreground/25 font-normal"> / </span>
+              <span>{project.name}</span>
+            </h1>
+            <PresenceStatus />
+          </div>
           {project.url && (
             <Link
               href={project.url}
@@ -82,7 +86,7 @@ const PersonalProjectPage = memo<PageProps<"/projects/[id]">>(
         </div>
       </main>
     );
-  }
+  },
 );
 PersonalProjectPage.displayName = "PersonalProjectPage";
 

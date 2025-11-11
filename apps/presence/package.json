@@ -1,0 +1,26 @@
+{
+  "name": "presence",
+  "version": "0.0.1",
+  "main": "dist/main.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "dev": "tsup --watch --onSuccess 'node dist/main.js'",
+    "start": "node dist/main.js"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@t3-oss/env-core": "^0.13.8",
+    "@zorsh/zorsh": "^0.3.3",
+    "dotenv": "^17.2.3",
+    "net-utils": "workspace:^",
+    "pino": "^10.1.0",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.56.0",
+    "zod": "^4.1.12"
+  }
+}

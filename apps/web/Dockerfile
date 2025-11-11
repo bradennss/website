@@ -21,9 +21,7 @@ COPY . .
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store,sharing=locked \
   pnpm install --frozen-lockfile
 
-WORKDIR /app/apps/web
-
-RUN pnpm build
+RUN pnpm turbo run build --filter=web...
 
 FROM base AS runner
 

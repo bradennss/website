@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { memo, PropsWithChildren } from "react";
-import { cn } from "~/utils";
-import "./globals.css";
 import { BASE_URL } from "~/const";
-import { QueryClientProvider } from "./providers/query-client";
+import { env } from "~/env";
+import { PresenceController } from "~/presence/controller";
+import { PresenceRenderer } from "~/presence/renderer";
+import { cn } from "~/utils";
+import { QueryClientProvider } from "../providers/query-client";
+import "./globals.css";
 
 const abcDiatype = localFont({
   src: [
@@ -51,6 +54,8 @@ export const metadata: Metadata = {
   },
 };
 
+export const dynamic = "force-dynamic";
+
 const RootLayout = memo<PropsWithChildren>(({ children }) => {
   return (
     <QueryClientProvider>
@@ -59,10 +64,12 @@ const RootLayout = memo<PropsWithChildren>(({ children }) => {
           className={cn(
             "bg-background text-foreground antialiased",
             abcDiatype.variable,
-            abcDiatypeMono.variable
+            abcDiatypeMono.variable,
           )}
         >
           {children}
+          <PresenceController serverUrl={env.PRESENCE_SERVER_URL} />
+          <PresenceRenderer />
         </body>
       </html>
     </QueryClientProvider>

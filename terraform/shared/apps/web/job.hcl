@@ -59,6 +59,7 @@ job "web" {
       env {
         PORT = "80"
         HOST = "0.0.0.0"
+        PRESENCE_SERVER_URL = "wss://${app_domain}/presence"
       }
     }
   }

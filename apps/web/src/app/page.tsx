@@ -11,6 +11,7 @@ import {
   PersonalProject,
   personalProjects,
 } from "~/data";
+import { PresenceStatus } from "~/presence/status";
 
 export const ClientProjectCard = memo<{ project: ClientProject }>(
   ({ project }) => {
@@ -31,7 +32,7 @@ export const ClientProjectCard = memo<{ project: ClientProject }>(
         </MultimediaContainer>
       </Link>
     );
-  }
+  },
 );
 ClientProjectCard.displayName = "ClientProjectCard";
 
@@ -54,14 +55,17 @@ export const PersonalProjectCard = memo<{ project: PersonalProject }>(
         </MultimediaContainer>
       </Link>
     );
-  }
+  },
 );
 PersonalProjectCard.displayName = "PersonalProjectCard";
 
 const HomePage = memo(() => {
   return (
     <main className="w-full px-4 pt-8 pb-8 flex flex-col gap-8">
-      <h1 className="text-2xl font-semibold lowercase">Work</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold lowercase">Work</h1>
+        <PresenceStatus />
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {clientProjects.map((project) => (
           <ClientProjectCard key={project.id} project={project} />

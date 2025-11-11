@@ -9,3 +9,11 @@ export function cn(...inputs: ClassValue[]) {
 export function getImageSrc(src: string | StaticImageData) {
   return typeof src === "string" ? src : src.src;
 }
+
+export function pluralize(
+  count: number,
+  singularWord: string,
+  pluralWord: string,
+) {
+  return `${count} ${count === 1 ? singularWord : pluralWord}`;
+}
