@@ -13,8 +13,8 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.${namespace}-web.rule=Host(`${app_domain}`)"
       - "traefik.http.services.${namespace}-web.loadbalancer.server.port=80"
-      - "traefik.http.services.${namespace}-web.loadbalancer.healthcheck.path=/api/health"
-      - "traefik.http.services.${namespace}-web.loadbalancer.healthcheck.interval=10s"
+      # - "traefik.http.services.${namespace}-web.loadbalancer.healthcheck.path=/api/health"
+      # - "traefik.http.services.${namespace}-web.loadbalancer.healthcheck.interval=10s"
     deploy:
       replicas: ${web_replicas}
     networks:
