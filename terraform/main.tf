@@ -1,7 +1,7 @@
 terraform {
   required_providers {
-    nomad = {
-      source = "hashicorp/nomad"
+    portainer = {
+      source = "portainer/portainer"
     }
   }
 
@@ -15,41 +15,33 @@ terraform {
     skip_requesting_account_id  = true
     skip_s3_checksum            = true
     use_path_style              = true
-    # access_key                  = "<YOUR_R2_ACCESS_KEY>"
-    # secret_key                  = "<YOUR_R2_ACCESS_SECRET>"
-    # endpoints                   = { s3 = "https://<YOUR_ACCOUNT_ID>.r2.cloudflarestorage.com" }
   }
 }
 
+provider "portainer" {
+  endpoint = var.portainer_endpoint
+  api_key  = var.portainer_api_key
+}
+
 locals {
-  app_domain         = "braden.lol"
+  namespace  = "braden-lol"
+  app_domain = "new.braden.lol"
 }
 
-resource "nomad_namespace" "namespace" {
-  name        = "braden-lol"
-  description = "braden.lol"
-}
+resource "portainer_stack" "stack" {
+  name            = local.namespace
+  deployment_type = "standalone"
+  method          = "string"
+  endpoint_id     = 1
 
-module "web" {
-  source = "./shared/apps/web"
+  stack_file_content = templatefile("${path.module}/compose.yml", {
+    namespace  = local.namespace
+    app_domain = local.app_domain
 
-  image_tag = var.web_image_tag
+    web_image_tag = var.web_image_tag
+    web_replicas  = 2
 
-  namespace = nomad_namespace.namespace.name
-  replicas  = 2
-  cpu       = 100
-  memory    = 100
-  app_domain = local.app_domain
-}
-
-module "presence" {
-  source = "./shared/apps/presence"
-
-  image_tag = var.presence_image_tag
-
-  namespace = nomad_namespace.namespace.name
-  replicas  = 1
-  cpu       = 100
-  memory    = 100
-  app_domain = local.app_domain
+    presence_image_tag = var.presence_image_tag
+    presence_replicas  = 1
+  })
 }
