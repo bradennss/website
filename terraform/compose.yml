@@ -12,10 +12,9 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${namespace}-web.rule=Host(`${app_domain}`)"
-      - "traefik.http.routers.${namespace}-web.entrypoints=websecure"
-      - "traefik.http.routers.${namespace}-web.tls.certresolver=letsencrypt"
+      - "traefik.http.services.${namespace}-web.loadbalancer.server.port=80"
       - "traefik.http.services.${namespace}-web.loadbalancer.healthcheck.path=/api/health"
-      - "traefik.http.services.${namespace}-web.loadbalancer.healthcheck.interval=10"
+      - "traefik.http.services.${namespace}-web.loadbalancer.healthcheck.interval=10s"
     deploy:
       replicas: ${web_replicas}
     networks:
@@ -30,12 +29,11 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${namespace}-presence.rule=Host(`${app_domain}`) && PathPrefix(`/presence`)"
-      - "traefik.http.routers.${namespace}-presence.entrypoints=websecure"
-      - "traefik.http.routers.${namespace}-presence.tls.certresolver=letsencrypt"
       - "traefik.http.routers.${namespace}-presence.middlewares=${namespace}-presence-stripprefix"
       - "traefik.http.middlewares.${namespace}-presence-stripprefix.stripprefix.prefixes=/presence"
+      - "traefik.http.services.${namespace}-presence.loadbalancer.server.port=80"
       - "traefik.http.services.${namespace}-presence.loadbalancer.healthcheck.path=/"
-      - "traefik.http.services.${namespace}-presence.loadbalancer.healthcheck.interval=10"
+      - "traefik.http.services.${namespace}-presence.loadbalancer.healthcheck.interval=10s"
     deploy:
       replicas: ${presence_replicas}
     networks:
