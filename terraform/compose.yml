@@ -1,5 +1,3 @@
-# Terraform template
-
 name: "${namespace}"
 
 services:
