@@ -28,11 +28,15 @@ locals {
   app_domain = "new.braden.lol"
 }
 
+data "portainer_environment" "local" {
+  name = "local"
+}
+
 resource "portainer_stack" "stack" {
   name            = local.namespace
   deployment_type = "standalone"
   method          = "string"
-  endpoint_id     = 1
+  endpoint_id     = data.portainer_environment.local.id
 
   stack_file_content = templatefile("${path.module}/compose.yml", {
     namespace  = local.namespace
