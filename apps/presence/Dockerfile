@@ -1,4 +1,4 @@
-FROM node:22-trixie-slim AS base
+FROM node:lts-bullseye-slim AS base
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
   apt-get -y update && \
