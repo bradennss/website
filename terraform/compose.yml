@@ -20,6 +20,7 @@ services:
       replicas: ${web_replicas}
     networks:
       - web
+      - public
 
   presence:
     image: "${presence_image_tag}"
@@ -39,7 +40,10 @@ services:
       replicas: ${presence_replicas}
     networks:
       - presence
+      - public
 
 networks:
   web:
   presence:
+  public:
+    external: true
