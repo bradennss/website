@@ -25,7 +25,7 @@ provider "portainer" {
 
 locals {
   namespace  = "braden-lol"
-  app_domain = "new.braden.lol"
+  app_domain = "braden.lol"
 }
 
 data "portainer_environment" "local" {
