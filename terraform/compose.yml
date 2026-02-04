@@ -6,9 +6,9 @@ services:
   web:
     image: "${web_image_tag}"
     environment:
-      - HOST=0.0.0.0
-      - PORT=80
-      - PRESENCE_SERVER_URL="wss://${app_domain}/presence"
+      HOST: "0.0.0.0"
+      PORT: "80"
+      PRESENCE_SERVER_URL: "wss://${app_domain}/presence"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${namespace}-web.rule=Host(`${app_domain}`)"
@@ -24,8 +24,8 @@ services:
   presence:
     image: "${presence_image_tag}"
     environment:
-      - HOST=0.0.0.0
-      - PORT=80
+      HOST: "0.0.0.0"
+      PORT: "80"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${namespace}-presence.rule=Host(`${app_domain}`) && PathPrefix(`/presence`)"
