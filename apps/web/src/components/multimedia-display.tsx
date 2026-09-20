@@ -18,15 +18,16 @@ export const MultimediaContainer = memo<ComponentProps<"div">>(
       <div
         className={cn(
           "relative overflow-hidden border border-foreground bg-linear-to-b from-foreground/5 to-foreground/25",
-          className
+          className,
         )}
         {...props}
       >
         {children}
       </div>
     );
-  }
+  },
 );
+MultimediaContainer.displayName = "MultimediaContainer";
 
 export const MultimediaSpinner = memo<ComponentProps<typeof Spinner>>(
   ({ className, ...props }) => {
@@ -34,12 +35,12 @@ export const MultimediaSpinner = memo<ComponentProps<typeof Spinner>>(
       <Spinner
         className={cn(
           "absolute bg-background top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
-          className
+          className,
         )}
         {...props}
       />
     );
-  }
+  },
 );
 MultimediaSpinner.displayName = "MultimediaSpinner";
 
@@ -69,7 +70,7 @@ export const MultimediaDisplay = memo<{
           "object-cover object-center transition-opacity duration-200",
           isLoaded ? "opacity-100" : "opacity-0",
           imageClassName,
-          className
+          className,
         )}
         style={style}
         {...rest}
@@ -92,7 +93,7 @@ export const MultimediaDisplay = memo<{
           "absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-200",
           isLoaded ? "opacity-100" : "opacity-0",
           videoClassName,
-          className
+          className,
         )}
         style={style}
         {...rest}
