@@ -30,7 +30,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: web
-          image: registry.sable.braden.lol/braden-lol-production/web@WEB_IMAGE_DIGEST
+          image: harbor.sable.braden.lol/braden-lol-production/web@WEB_IMAGE_DIGEST
           env:
             - name: HOSTNAME
               value: 0.0.0.0
@@ -101,7 +101,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: presence
-          image: registry.sable.braden.lol/braden-lol-production/presence@PRESENCE_IMAGE_DIGEST
+          image: harbor.sable.braden.lol/braden-lol-production/presence@PRESENCE_IMAGE_DIGEST
           env:
             - name: HOST
               value: 0.0.0.0

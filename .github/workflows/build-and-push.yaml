@@ -16,7 +16,7 @@ permissions:
   contents: write
 
 env:
-  IMAGE_REPOSITORY: registry.sable.braden.lol/braden-lol-production
+  IMAGE_REPOSITORY: harbor.sable.braden.lol/braden-lol-production
 
 jobs:
   build-and-push:
@@ -32,7 +32,7 @@ jobs:
       - name: Login to Sable registry
         uses: docker/login-action@v3
         with:
-          registry: registry.sable.braden.lol
+          registry: harbor.sable.braden.lol
           username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
           password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
       - id: web-image
@@ -72,7 +72,7 @@ jobs:
               "presence": os.environ["PRESENCE_DIGEST"],
           }
           for image, digest in replacements.items():
-              pattern = rf"(registry\.sable\.braden\.lol/braden-lol-production/{image}@)(?:sha256:[a-f0-9]{{64}}|[A-Z_]+)"
+              pattern = rf"(harbor\.sable\.braden\.lol/braden-lol-production/{image}@)(?:sha256:[a-f0-9]{{64}}|[A-Z_]+)"
               content, count = re.subn(pattern, rf"\g<1>{digest}", content)
               if count != 1:
                   raise SystemExit(f"Expected one {image} image reference, found {count}")
