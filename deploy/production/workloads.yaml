@@ -24,6 +24,7 @@ spec:
         app: web
     spec:
       serviceAccountName: web
+      enableServiceLinks: false
       securityContext:
         runAsNonRoot: true
         runAsUser: 1001
@@ -97,6 +98,7 @@ spec:
         app: presence
     spec:
       serviceAccountName: presence
+      enableServiceLinks: false
       securityContext:
         runAsNonRoot: true
         runAsUser: 1001
