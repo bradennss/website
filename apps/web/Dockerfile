@@ -9,7 +9,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
-RUN corepack install -g pnpm
+RUN corepack install -g pnpm@9.14.2
 
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store,sharing=locked \
   pnpm add --global turbo@^2
