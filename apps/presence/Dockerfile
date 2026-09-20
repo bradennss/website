@@ -41,11 +41,16 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 
 WORKDIR /app
 
-COPY --from=builder /app .
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 presence
+
+COPY --from=builder --chown=presence:nodejs /app .
 
 WORKDIR /app/apps/presence
 
 ENV NODE_ENV="production"
+
+USER presence
 
 ENTRYPOINT [ "/usr/bin/dumb-init", "--" ]
 CMD [ "node", "dist/main.js" ]

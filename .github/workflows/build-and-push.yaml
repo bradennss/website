@@ -4,60 +4,92 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - deploy/**
   workflow_dispatch:
 
 concurrency:
   group: build-and-push
   cancel-in-progress: false
 
+permissions:
+  contents: write
+
 env:
-  DOCKER_REPO: "${{ vars.DOCKER_REGISTRY }}/braden-lol"
+  IMAGE_REPOSITORY: registry.sable.braden.lol/braden-lol-production
 
 jobs:
   build-and-push:
+    name: Build and Push
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        app:
-          - name: Web
-            image_name: web
-            app_dir: apps/web
-          - name: Presence
-            image_name: presence
-            app_dir: apps/presence
-    name: Build and Push ${{ matrix.app.name }}
-    env:
-      IMAGE_EXISTS: "false"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - id: app-version
-        name: Get app version
-        uses: martinbeentjes/npm-get-version-action@v1.3.1
         with:
-          path: ${{ matrix.app.app_dir }}
+          fetch-depth: 0
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      - name: Login to Registry
+      - name: Login to Sable registry
         uses: docker/login-action@v3
         with:
-          registry: ${{ vars.DOCKER_REGISTRY }}
+          registry: registry.sable.braden.lol
           username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
           password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
-      - name: Check if image exists
-        run: |
-          if docker manifest inspect ${{ env.DOCKER_REPO }}/${{ matrix.app.image_name }}:v${{ steps.app-version.outputs.current-version }} 2>/dev/null; then
-            echo "IMAGE_EXISTS=true" >> $GITHUB_ENV
-          fi
-      - name: Build and push image
+      - id: web-image
+        name: Build and push web image
         uses: docker/build-push-action@v6
-        if: ${{ env.IMAGE_EXISTS == 'false' }}
         with:
           context: .
-          file: ${{ matrix.app.app_dir }}/Dockerfile
+          file: apps/web/Dockerfile
           push: true
-          tags: |
-            ${{ env.DOCKER_REPO }}/${{ matrix.app.image_name }}:v${{ steps.app-version.outputs.current-version }}
-            ${{ env.DOCKER_REPO }}/${{ matrix.app.image_name }}:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          tags: ${{ env.IMAGE_REPOSITORY }}/web:${{ github.sha }}
+          cache-from: type=gha,scope=web
+          cache-to: type=gha,mode=max,scope=web
+      - id: presence-image
+        name: Build and push presence image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/presence/Dockerfile
+          push: true
+          tags: ${{ env.IMAGE_REPOSITORY }}/presence:${{ github.sha }}
+          cache-from: type=gha,scope=presence
+          cache-to: type=gha,mode=max,scope=presence
+      - name: Pin deployed image digests
+        env:
+          WEB_DIGEST: ${{ steps.web-image.outputs.digest }}
+          PRESENCE_DIGEST: ${{ steps.presence-image.outputs.digest }}
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import os
+          import re
+
+          manifest = Path("deploy/production/workloads.yaml")
+          content = manifest.read_text()
+          replacements = {
+              "web": os.environ["WEB_DIGEST"],
+              "presence": os.environ["PRESENCE_DIGEST"],
+          }
+          for image, digest in replacements.items():
+              pattern = rf"(registry\.sable\.braden\.lol/braden-lol-production/{image}@)(?:sha256:[a-f0-9]{{64}}|[A-Z_]+)"
+              content, count = re.subn(pattern, rf"\g<1>{digest}", content)
+              if count != 1:
+                  raise SystemExit(f"Expected one {image} image reference, found {count}")
+          manifest.write_text(content)
+          PY
+      - name: Publish deployment revision
+        env:
+          SOURCE_REVISION: ${{ github.sha }}
+        run: |
+          git fetch --no-tags origin main
+          if [ "$(git rev-parse origin/main)" != "$SOURCE_REVISION" ]; then
+            echo "A newer main revision exists; its workflow will publish the deployment."
+            exit 0
+          fi
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add deploy/production/workloads.yaml
+          git diff --cached --quiet && exit 0
+          git commit -m "Deploy $SOURCE_REVISION"
+          git push origin HEAD:main
