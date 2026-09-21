@@ -10,10 +10,7 @@ on:
 
 concurrency:
   group: build-and-push
-  cancel-in-progress: false
-
-permissions:
-  contents: write
+  cancel-in-progress: true
 
 env:
   IMAGE_REPOSITORY: ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_REGISTRY_PROJECT }}
@@ -21,14 +18,20 @@ env:
   REGISTRY_PROJECT: ${{ vars.DOCKER_REGISTRY_PROJECT }}
 
 jobs:
-  build-and-push:
-    name: Build and Push
+  build:
+    name: Build ${{ matrix.app }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        app:
+          - web
+          - presence
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
       - name: Login to Sable registry
@@ -37,26 +40,39 @@ jobs:
           registry: ${{ env.REGISTRY_HOST }}
           username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
           password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
-      - id: web-image
-        name: Build and push web image
+      - id: image
+        name: Build and push image
         uses: docker/build-push-action@v7
         with:
           context: .
-          file: apps/web/Dockerfile
+          file: apps/${{ matrix.app }}/Dockerfile
           push: true
-          tags: ${{ env.IMAGE_REPOSITORY }}/web:${{ github.sha }}
-          cache-from: type=gha,scope=web
-          cache-to: type=gha,mode=max,scope=web
-      - id: presence-image
-        name: Build and push presence image
-        uses: docker/build-push-action@v7
+          tags: ${{ env.IMAGE_REPOSITORY }}/${{ matrix.app }}:${{ github.sha }}
+          cache-from: type=gha,scope=${{ matrix.app }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.app }}
+      - name: Save image digest
+        env:
+          IMAGE_DIGEST: ${{ steps.image.outputs.digest }}
+        run: printf '%s\n' "$IMAGE_DIGEST" > "${{ matrix.app }}.digest"
+      - name: Upload image digest
+        uses: actions/upload-artifact@v7
         with:
-          context: .
-          file: apps/presence/Dockerfile
-          push: true
-          tags: ${{ env.IMAGE_REPOSITORY }}/presence:${{ github.sha }}
-          cache-from: type=gha,scope=presence
-          cache-to: type=gha,mode=max,scope=presence
+          name: digest-${{ matrix.app }}
+          path: ${{ matrix.app }}.digest
+          if-no-files-found: error
+          retention-days: 1
+
+  deploy:
+    name: Publish deployment revision
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - name: Set up pnpm
         uses: pnpm/action-setup@v6
       - name: Set up Node.js
@@ -66,19 +82,28 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Download image digests
+        uses: actions/download-artifact@v8
+        with:
+          pattern: digest-*
+          path: digests
+          merge-multiple: true
       - name: Set up kubectl
         uses: azure/setup-kubectl@v5
         with:
           version: v1.37.0
       - name: Render deployment manifest
         env:
-          WEB_IMAGE: ${{ env.IMAGE_REPOSITORY }}/web@${{ steps.web-image.outputs.digest }}
-          PRESENCE_IMAGE: ${{ env.IMAGE_REPOSITORY }}/presence@${{ steps.presence-image.outputs.digest }}
+          WEB_IMAGE: ${{ env.IMAGE_REPOSITORY }}/web
+          PRESENCE_IMAGE: ${{ env.IMAGE_REPOSITORY }}/presence
           PRESENCE_SERVER_URL: ${{ vars.PRESENCE_SERVER_URL }}
         run: |
           : "${REGISTRY_HOST:?Set the DOCKER_REGISTRY repository variable}"
           : "${REGISTRY_PROJECT:?Set the DOCKER_REGISTRY_PROJECT repository variable}"
           : "${PRESENCE_SERVER_URL:?Set the PRESENCE_SERVER_URL repository variable}"
+          WEB_IMAGE="$WEB_IMAGE@$(<digests/web.digest)"
+          PRESENCE_IMAGE="$PRESENCE_IMAGE@$(<digests/presence.digest)"
+          export WEB_IMAGE PRESENCE_IMAGE
           pnpm --filter @braden-lol/deployment-tooling render \
             --template deploy/workloads.yaml.eta \
             --output deploy/production/workloads.yaml

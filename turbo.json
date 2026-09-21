@@ -3,41 +3,26 @@
   "envMode": "loose",
   "tasks": {
     "topo": {
-      "dependsOn": [
-        "^topo"
-      ]
+      "dependsOn": ["^topo"]
     },
     "build": {
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
     "dev": {
       "cache": false,
       "persistent": false,
-      "dependsOn": [
-        "^build",
-        "^topo"
-      ]
+      "dependsOn": ["^build", "^topo"]
     },
     "format": {},
     "lint": {
-      "dependsOn": [
-        "^topo",
-        "^build"
-      ]
+      "dependsOn": ["^topo", "^build"]
     },
     "typecheck": {
-      "dependsOn": [
-        "^topo",
-        "^build"
-      ]
+      "dependsOn": ["^topo", "^build"]
     },
     "test": {
-      "dependsOn": [
-        "^topo",
-        "^build"
-      ]
+      "dependsOn": ["^topo", "^build"]
     }
   }
 }

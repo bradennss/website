@@ -1,12 +1,8 @@
-FROM node:24.21.0-trixie-slim AS base
-
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-  apt-get -y update && \
-  apt-get -y install libc6
+FROM node:24.21.0-trixie-slim AS build-base
 
 RUN npm install --global pnpm@12.5.1 turbo@2.11.2
 
-FROM base AS pruned
+FROM build-base AS pruned
 
 WORKDIR /app
 
@@ -14,21 +10,24 @@ COPY . .
 
 RUN turbo prune presence --docker
 
-FROM base AS builder
-
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-  apt-get -y update && \
-  apt-get -y install gcc g++ python3 make
+FROM build-base AS builder
 
 WORKDIR /app
 
 COPY --from=pruned /app/out/json/ .
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store,sharing=locked pnpm install --frozen-lockfile
+COPY --from=pruned /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store,sharing=locked \
+  pnpm install --frozen-lockfile
 
 COPY --from=pruned /app/out/full/ .
-RUN pnpm build
+COPY turbo.json turbo.json
 
-FROM base AS runner
+RUN pnpm turbo run build --filter=presence...
+RUN find . -type d -name node_modules -prune -exec rm -rf '{}' +
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store,sharing=locked \
+  pnpm install --frozen-lockfile --prod
+
+FROM node:24.21.0-trixie-slim AS runner
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
   apt-get -y update && \
