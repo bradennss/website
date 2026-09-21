@@ -16,7 +16,9 @@ permissions:
   contents: write
 
 env:
-  IMAGE_REPOSITORY: harbor.sable.braden.lol/braden-lol-production
+  IMAGE_REPOSITORY: ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_REGISTRY_PROJECT }}
+  REGISTRY_HOST: ${{ vars.DOCKER_REGISTRY }}
+  REGISTRY_PROJECT: ${{ vars.DOCKER_REGISTRY_PROJECT }}
 
 jobs:
   build-and-push:
@@ -24,20 +26,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       - name: Login to Sable registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
-          registry: harbor.sable.braden.lol
+          registry: ${{ env.REGISTRY_HOST }}
           username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
           password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
       - id: web-image
         name: Build and push web image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: apps/web/Dockerfile
@@ -47,7 +49,7 @@ jobs:
           cache-to: type=gha,mode=max,scope=web
       - id: presence-image
         name: Build and push presence image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: apps/presence/Dockerfile
@@ -55,29 +57,32 @@ jobs:
           tags: ${{ env.IMAGE_REPOSITORY }}/presence:${{ github.sha }}
           cache-from: type=gha,scope=presence
           cache-to: type=gha,mode=max,scope=presence
-      - name: Pin deployed image digests
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v5
+        with:
+          version: v1.37.0
+      - name: Render deployment manifest
         env:
-          WEB_DIGEST: ${{ steps.web-image.outputs.digest }}
-          PRESENCE_DIGEST: ${{ steps.presence-image.outputs.digest }}
+          WEB_IMAGE: ${{ env.IMAGE_REPOSITORY }}/web@${{ steps.web-image.outputs.digest }}
+          PRESENCE_IMAGE: ${{ env.IMAGE_REPOSITORY }}/presence@${{ steps.presence-image.outputs.digest }}
+          PRESENCE_SERVER_URL: ${{ vars.PRESENCE_SERVER_URL }}
         run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import os
-          import re
-
-          manifest = Path("deploy/production/workloads.yaml")
-          content = manifest.read_text()
-          replacements = {
-              "web": os.environ["WEB_DIGEST"],
-              "presence": os.environ["PRESENCE_DIGEST"],
-          }
-          for image, digest in replacements.items():
-              pattern = rf"(harbor\.sable\.braden\.lol/braden-lol-production/{image}@)(?:sha256:[a-f0-9]{{64}}|[A-Z_]+)"
-              content, count = re.subn(pattern, rf"\g<1>{digest}", content)
-              if count != 1:
-                  raise SystemExit(f"Expected one {image} image reference, found {count}")
-          manifest.write_text(content)
-          PY
+          : "${REGISTRY_HOST:?Set the DOCKER_REGISTRY repository variable}"
+          : "${REGISTRY_PROJECT:?Set the DOCKER_REGISTRY_PROJECT repository variable}"
+          : "${PRESENCE_SERVER_URL:?Set the PRESENCE_SERVER_URL repository variable}"
+          pnpm --filter @braden-lol/deployment-tooling render \
+            --template deploy/workloads.yaml.eta \
+            --output deploy/production/workloads.yaml
+          kubectl kustomize deploy/production >/dev/null
       - name: Publish deployment revision
         env:
           SOURCE_REVISION: ${{ github.sha }}

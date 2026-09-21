@@ -1,15 +1,10 @@
-FROM node:lts-trixie-slim AS base
+FROM node:24.21.0-trixie-slim AS base
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
   apt-get -y update && \
   apt-get -y install libc6
 
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
-RUN corepack install -g pnpm@9.14.2
-
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store,sharing=locked pnpm add --global turbo@^2
+RUN npm install --global pnpm@12.5.1 turbo@2.11.2
 
 FROM base AS pruned
 
