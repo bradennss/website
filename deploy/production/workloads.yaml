@@ -33,7 +33,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: web
-          image: harbor.sable.braden.lol/braden-lol-production/web@sha256:fd0fcf80235e65e9c76b8714c7cd2cc9dd2519402a7d20c14db8ea9550a9998c
+          image: harbor.sable.braden.lol/braden-lol-production/web@sha256:0cb504954057cfb69d1d3c942a5e22ac748794bc936109143d57c4c24da564b6
           env:
             - name: HOSTNAME
               value: 0.0.0.0
@@ -107,7 +107,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: presence
-          image: harbor.sable.braden.lol/braden-lol-production/presence@sha256:9489d8880c5d6ff6355add57830937f8739742115c4d2a2e498d783f91667b73
+          image: harbor.sable.braden.lol/braden-lol-production/presence@sha256:256640977e4493beaea646e943ddeba92b8dc570b6b32d575ef441baf9004641
           env:
             - name: HOST
               value: 0.0.0.0
