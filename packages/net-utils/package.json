@@ -9,8 +9,8 @@
     "dev": "tsup --watch"
   },
   "devDependencies": {
-    "@types/node": "^22.19.0",
-    "tsup": "^8.5.0",
+    "@types/node": "^24.10.0",
+    "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "vitest": "^4.0.8"
   },

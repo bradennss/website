@@ -2,9 +2,9 @@
   "name": "braden-lol",
   "private": true,
   "engines": {
-    "node": ">=22.11.0"
+    "node": ">=24.0.0"
   },
-  "packageManager": "pnpm@9.14.2",
+  "packageManager": "pnpm@12.5.1",
   "scripts": {
     "lint": "turbo run lint --continue",
     "format": "turbo run format --continue",
@@ -15,8 +15,8 @@
     "test": "turbo run test"
   },
   "devDependencies": {
-    "prettier": "3.5.3",
-    "turbo": "2.6.0"
+    "prettier": "3.9.8",
+    "turbo": "2.11.2"
   },
   "prettier": {}
 }
