@@ -23,11 +23,6 @@ export const assets = {
       productInteractionVideo: `${CDN_URL}/client-projects/awaken-product-interaction.mp4`,
       protectedFormInteractionVideo: `${CDN_URL}/client-projects/awaken-protected-form-interaction.mp4`,
     },
-    chalkheads: {
-      bootVideo: `${CDN_URL}/client-projects/chalkheads-boot.mp4?v=2`,
-      previewInteractionVideo: `${CDN_URL}/client-projects/chalkheads-preview-interaction.mp4`,
-      loginInteractionVideo: `${CDN_URL}/client-projects/chalkheads-login-interaction.mp4`,
-    },
     comunal: {
       careersImage: `${CDN_URL}/client-projects/comunal-careers.png`,
       homeImage: `${CDN_URL}/client-projects/comunal-home.png?v=2`,

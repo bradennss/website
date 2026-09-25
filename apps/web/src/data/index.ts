@@ -170,31 +170,6 @@ export const clientProjects: ClientProject[] = [
       },
     ],
   },
-  {
-    id: "chalkheads",
-    name: "Chalkhead's Playground",
-    url: "https://chalkheadsplayground.com",
-    media: [
-      {
-        type: "video",
-        src: assets.clientProjects.chalkheads.bootVideo,
-        width: 638,
-        height: 398,
-      },
-      {
-        type: "video",
-        src: assets.clientProjects.chalkheads.previewInteractionVideo,
-        width: 638,
-        height: 398,
-      },
-      {
-        type: "video",
-        src: assets.clientProjects.chalkheads.loginInteractionVideo,
-        width: 638,
-        height: 398,
-      },
-    ],
-  },
   // {
   //   id: "comunal",
   //   name: "Comunal",
