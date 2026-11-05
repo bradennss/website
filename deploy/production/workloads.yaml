@@ -1,10 +1,3 @@
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: web
-imagePullSecrets:
-  - name: braden-lol-production-registry-pull
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -23,7 +16,8 @@ spec:
       labels:
         app: web
     spec:
-      serviceAccountName: web
+      serviceAccountName: workload
+      automountServiceAccountToken: false
       enableServiceLinks: false
       securityContext:
         runAsNonRoot: true
@@ -74,13 +68,6 @@ spec:
               drop:
                 - ALL
 ---
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: presence
-imagePullSecrets:
-  - name: braden-lol-production-registry-pull
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -97,7 +84,8 @@ spec:
       labels:
         app: presence
     spec:
-      serviceAccountName: presence
+      serviceAccountName: workload
+      automountServiceAccountToken: false
       enableServiceLinks: false
       securityContext:
         runAsNonRoot: true
