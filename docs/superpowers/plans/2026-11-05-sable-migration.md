@@ -41,14 +41,14 @@
 
 ## Task 2: Operator-owned registration and routes
 
-**Files in Sable:** Create `projects/website/provisioning/{namespace,rbac,limits,network,kustomization}.yaml`, `projects/website/reconciliation/{source,kustomization}.yaml`, `projects/website/endpoints/{web,kustomization}.yaml`, and `projects/website/reconciliations.yaml`; modify `clusters/sable/projects/kustomization.yaml`; extend `tests/unit/test_endpoint_allocations.py` or add a focused onboarding regression file using existing test conventions.
+**Files in Sable:** Create `projects/website/provisioning/{namespace,rbac,limits,network,kustomization}.yaml`, `projects/website/reconciliation/{source,kustomization}.yaml`, `projects/website/endpoints/{web,kustomization}.yaml`, and `projects/website/reconciliations.yaml`; modify `clusters/sable/projects/kustomization.yaml`
 
 **Interface:** Namespace `website`, restricted `workload` and `reconciler` identities; public `braden.lol` routes refer to Task 1's Services. Flux reads public `https://github.com/bradennss/website`, branch `main`, path `./deploy/production`.
 
-1. Read Sable's approved implementation plan, admission policies, endpoint allocation checks, and reconciliation ordering examples before editing. Add failing regression assertions for project registration, dependency ordering, public hostname ownership, and presence prefix rewrite.
+1. Read Sable's approved implementation plan, admission policies, endpoint allocation checks, and reconciliation ordering examples before editing. Use existing Sable rendering, schema, and allocation checks for project registration, dependency ordering, and public hostname ownership. Do not add external-project tests to Sable. Verify the presence prefix rewrite through the live public WebSocket path.
 2. Copy and adapt the explicit project provisioning examples to namespace `website`. Add ordered Flux provisioning, source, and endpoint reconciliation; workloads must not run before provisioning succeeds. Start project delivery suspended until published images are pullable.
 3. Add explicitly public website ingress and presence routing with a Traefik prefix-strip middleware. Test `/presence` and `/presence/` semantics. Use the documented staging HTTP-01 issuer initially.
-4. Run focused unit tests and `just check`. Review the full diff, commit, and publish the operator registration changes using a scoped branch and PR.
+4. Run the existing unit suite and `just check`. Review the full diff, commit, and publish the operator registration changes using a scoped branch and PR.
 
 ## Task 3: Publish, reconcile, and verify the live outcome
 
